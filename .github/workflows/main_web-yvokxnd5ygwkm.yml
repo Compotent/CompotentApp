@@ -20,6 +20,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '5.0.x'
+    - name: nuget
+      run: dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
 
     - name: Build with dotnet
       run: dotnet build --configuration Release
@@ -50,7 +52,6 @@ jobs:
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'web-yvokxnd5ygwkm'
-        slot-name: 'production'
+        app-nampackageame: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_ec04c8064e304548b606f27096829c3b }}
         package: .
