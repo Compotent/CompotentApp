@@ -14,20 +14,6 @@ function Button({ children, ...args }) {
   );
 }
 
-function getImgSize(imgSrc) {
-  let newImg = new Image();
-  newImg.onload = function () {
-    return {
-      height: newImg.height,
-      width: newImg.width
-    };
-  };
-  newImg.src = imgSrc;
-  return newImg.onload();
-}
-
-const size = getImgSize(imgUrl);
-
 export class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -79,68 +65,68 @@ export class Home extends React.Component {
         }
       ],
       rotationSettings: [
-      {
-        id: 5,
-        property: "rotate_x",
-        default: "0",
-        min: "0",
-        max: "180"
-      },
-      {
-        id: 6,
-        property: "rotate_y",
-        default: "0",
-        min: "0",
-        max: "180"
-      },
-      {
-        id: 7,
-        property: "rotate_z",
-        default: "0",
-        min: "0",
-        max: "360"
-      },
-    ],
-    sizeSettings: [
-      {
-        id: 8,
-        property: "top",
-        default: "0",
-        min: "0",
-        max: `${size.height}`
-      },
-      {
-        id: 9,
-        property: "right",
-        default: "0",
-        min: "0",
-        max: `${size.width}`
-      },
-      {
-        id: 10,
-        property: "bottom",
-        default: "0",
-        min: "0",
-        max: `${size.height}`
-      },
-      {
-        id: 11,
-        property: "left",
-        default: "0",
-        min: "0",
-        max: `${size.width}`
-      }
-    ],
-    blurSettings:[
-      {
-        id: 12,
-        property: "blur",
-        default: "0",
-        min: "0",
-        max: "10",
-        step: "0.01"
-      }
-    ]
+        {
+          id: 5,
+          property: "rotate_x",
+          default: "0",
+          min: "0",
+          max: "180"
+        },
+        {
+          id: 6,
+          property: "rotate_y",
+          default: "0",
+          min: "0",
+          max: "180"
+        },
+        {
+          id: 7,
+          property: "rotate_z",
+          default: "0",
+          min: "0",
+          max: "360"
+        }
+      ],
+      sizeSettings: [
+        {
+          id: 8,
+          property: "top",
+          default: "0",
+          min: "0",
+          max: "100"
+        },
+        {
+          id: 9,
+          property: "right",
+          default: "0",
+          min: "0",
+          max: "100"
+        },
+        {
+          id: 10,
+          property: "bottom",
+          default: "0",
+          min: "0",
+          max: "100"
+        },
+        {
+          id: 11,
+          property: "left",
+          default: "0",
+          min: "0",
+          max: "100"
+        }
+      ],
+      blurSettings: [
+        {
+          id: 12,
+          property: "blur",
+          default: "0",
+          min: "0",
+          max: "10",
+          step: "0.01"
+        }
+      ]
     };
     this.changeImage = this.changeImage.bind(this);
     this.changeSettings = this.changeSettings.bind(this);
@@ -159,7 +145,7 @@ export class Home extends React.Component {
   changeSettings(settings) {
     let currentEdit = { ...this.state.currentEdit, ...settings };
     this.setState({ currentEdit });
-  }  
+  }
 
   handleChange(e) {
     let currentEdit = {
@@ -197,38 +183,39 @@ export class Home extends React.Component {
 
   resetBlur(e) {
     this.changeSettings({
-      blur: "0",
+      blur: "0"
     });
   }
-
 
   addInputs(resetFunction, currentSettings) {
     return (
       <div className="inputs">
-              <Button className="resetButton" onClick={resetFunction}>По умолчанию</Button>
-              {currentSettings.map((setting) => (
-                <form key={setting.id}>
-                  <h3>{setting.property}</h3>
-                  <input
-                    type="range"
-                    name={setting.property}
-                    value={this.state.currentEdit[setting.property]}
-                    step={setting.step}
-                    min={setting.min}
-                    max={setting.max}
-                    onChange={this.handleChange}
-                  />
-                  <input
-                    type="number"
-                    name={setting.property}
-                    value={this.state.currentEdit[setting.property]}
-                    step={setting.step}
-                    onChange={this.handleChange}
-                  />
-                </form>
-              ))}
-            </div>
-    )
+        <Button className="resetButton" onClick={resetFunction}>
+          По умолчанию
+        </Button>
+        {currentSettings.map((setting) => (
+          <form key={setting.id}>
+            <h3>{setting.property}</h3>
+            <input
+              type="range"
+              name={setting.property}
+              value={this.state.currentEdit[setting.property]}
+              step={setting.step}
+              min={setting.min}
+              max={setting.max}
+              onChange={this.handleChange}
+            />
+            <input
+              type="number"
+              name={setting.property}
+              value={this.state.currentEdit[setting.property]}
+              step={setting.step}
+              onChange={this.handleChange}
+            />
+          </form>
+        ))}
+      </div>
+    );
   }
 
   render() {
@@ -246,11 +233,12 @@ export class Home extends React.Component {
       left,
       blur
     } = this.state.currentEdit;
-
     const imgStyle = {
-      clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px)`,
+      width: "auto",
+      height: "auto",
+      clipPath: `inset(${top}% ${right}% ${bottom}% ${left}%)`,
       transform: `rotateX(${rotate_x}deg) rotateY(${rotate_y}deg) rotateZ(${rotate_z}deg)`,
-      filter: `blur(${blur}px) brightness(${brightness}) saturate(${saturate}%) contrast(${contrast}%) sepia(${sepia}%)`,
+      filter: `blur(${blur}px) brightness(${brightness}) saturate(${saturate}%) contrast(${contrast}%) sepia(${sepia}%)`
     };
 
     return (
@@ -314,7 +302,7 @@ export class Home extends React.Component {
           <TabPanel>
             <div className="panel-content">
               <h2 className="panel-title">Эффекты</h2>
-              {this.addInputs(this.resetFilters, this.state.filterSettings)}              
+              {this.addInputs(this.resetFilters, this.state.filterSettings)}
             </div>
           </TabPanel>
           <TabPanel>
