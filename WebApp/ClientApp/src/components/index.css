@@ -126,8 +126,22 @@ input[type="number"] {
   color: #b0bec5;
 }
 
-button:hover {
+.resetButton {
+  text-align: center;
+  background: linear-gradient(145deg, #007bff, #7decff);
+  
+  color: white;
+  font-weight: bolder;
+  border-radius: 60px;
+  border: none;
+  width: 45%;
+  height: 30px;
+}
+
+.resetButton:hover{
   cursor: pointer;
+  transition: all 0.2s;
+	box-shadow: 2px 3px 15px 0 rgb(128 209 239 / 75%);
 }
 
 .icons {
