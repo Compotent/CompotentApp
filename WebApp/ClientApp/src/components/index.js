@@ -31,7 +31,12 @@ export class Home extends React.Component {
         right: "0",
         bottom: "0",
         left: "0",
-        blur: "0"
+        blur: "0",
+        text: "",
+        textcolor: "#000",
+        fontsize: "20",
+        text_x: "50",
+        text_y: "50"
       },
       filterSettings: [
         {
@@ -126,20 +131,59 @@ export class Home extends React.Component {
           max: "10",
           step: "0.01"
         }
+      ],
+      textSettings: [
+        {
+          id: 13,
+          property: "text",
+          text: ""
+        },
+        {
+          id: 14,
+          property: "textcolor",
+          default: "#000"
+        },
+        {
+          id: 15,
+          property: "fontsize"
+        },
+        {
+          id: 16,
+          property: "text_x"
+        },
+        {
+          id: 17,
+          property: "text_y"
+        }
       ]
     };
-    this.changeImage = this.changeImage.bind(this);
+    this.handleImageChange = this.handleImageChange.bind(this);
     this.changeSettings = this.changeSettings.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.changeText = this.changeText.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.resetRotation = this.resetRotation.bind(this);
     this.resetBlur = this.resetBlur.bind(this);
     this.resetSize = this.resetSize.bind(this);
     this.resetBlur = this.resetBlur.bind(this);
   }
+  
+  handleImageChange(e) {
+    e.preventDefault();
 
-  changeImage(imageUrl) {
-    this.setState({ image: imageUrl });
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      this.setState({ image: reader.result });
+      this.setState({ imageSize: {imgHeight: file.offsetHeight} });
+      /*let imgWidth = {...this.state.imageSize.imgWidth, reader.result.imgWidth}
+      this.setState({imgWidth: reader.result.imgWidth})*/
+      /*imgWidth = file.width;
+      imgHeight = file.height;*/
+    }
+
+    reader.readAsDataURL(file)
   }
 
   changeSettings(settings) {
@@ -153,6 +197,10 @@ export class Home extends React.Component {
       [e.target.name.toLowerCase()]: e.target.value
     };
     this.setState({ currentEdit });
+  }
+
+  changeText(event) {
+    this.setState({ text: event.target.value });
   }
 
   resetFilters(e) {
@@ -231,7 +279,11 @@ export class Home extends React.Component {
       right,
       bottom,
       left,
-      blur
+      blur,
+      textcolor,
+      fontsize,
+      text_x,
+      text_y,
     } = this.state.currentEdit;
     const imgStyle = {
       width: "auto",
@@ -239,6 +291,15 @@ export class Home extends React.Component {
       clipPath: `inset(${top}% ${right}% ${bottom}% ${left}%)`,
       transform: `rotateX(${rotate_x}deg) rotateY(${rotate_y}deg) rotateZ(${rotate_z}deg)`,
       filter: `blur(${blur}px) brightness(${brightness}) saturate(${saturate}%) contrast(${contrast}%) sepia(${sepia}%)`
+    };
+    const textStyle = {
+      fontFace: "Calibri",
+      fontSize: `${fontsize}px`,
+      fontWeight: "bold",
+      color: `${textcolor}`,
+      position: "absolute",
+      bottom: `${text_y}%`,
+      left: `${text_x}%`
     };
 
     return (
@@ -297,6 +358,78 @@ export class Home extends React.Component {
           <TabPanel>
             <div className="panel-content">
               <h2 className="panel-title">Текст</h2>
+              <div className="inputs">
+                <textarea
+                  placeholder="Type text here!"
+                  className="textarea"
+                  value={this.state.text}
+                  onChange={this.changeText}
+                />
+                <form key="13">
+                  <h3>Font size</h3>
+                  <input
+                    type="range"
+                    name={this.state.textSettings[2].property}
+                    value={
+                      this.state.currentEdit[this.state.textSettings.fontsize]
+                    }
+                    step="0.5"
+                    min="2"
+                    max="100"
+                    onChange={this.handleChange}
+                  />
+                  <input
+                    type="number"
+                    name={this.state.textSettings[2].property}
+                    value={
+                      this.state.currentEdit[this.state.textSettings.fontsize]
+                    }
+                    step="0.5"
+                    onChange={this.handleChange}
+                  />
+                </form>
+                <form key="14">
+                  <h3>Color</h3>
+                  <input
+                    id="textColor"
+                    type="color"
+                    name="textcolor"
+                    value={
+                      this.state.currentEdit[this.state.textSettings.textColor]
+                    }
+                    onChange={this.handleChange}
+                    list="colorList"
+                  />
+                </form>
+                <form key="15">
+                  <h3>Font position X</h3>
+                  <input
+                    type="range"
+                    name={this.state.textSettings[3].property}
+                    value={
+                      this.state.currentEdit[this.state.textSettings.text_x]
+                    }
+                    step="0.05"
+                    min="0"
+                    max="100"
+                    onChange={this.handleChange}
+                  />
+                </form>
+                <form key="16">
+                  <h3>Font pozition Y</h3>
+                  <input
+                    type="range"
+                    name={this.state.textSettings[4].property}
+                    value={
+                      this.state.currentEdit[this.state.textSettings.text_y]
+                    }
+                    step="0.05"
+                    min="0"
+                    max="100"
+                    onChange={this.handleChange}
+                  />
+                </form>
+              </div>
             </div>
           </TabPanel>
           <TabPanel>
@@ -314,21 +447,38 @@ export class Home extends React.Component {
           <TabPanel>
             <div className="panel-content">
               <h2 className="panel-title">Формат изображения</h2>
+              <Button className="formatButton">
+                Преобразовать в jpeg
+              </Button>
+              <Button className="formatButton">
+                Преобразовать в png
+              </Button>
             </div>
           </TabPanel>
           <TabPanel>
             <div className="panel-content">
               <h2 className="panel-title">Скачать</h2>
+              <Button className="downloadButton">
+                Скачать изображение
+              </Button>
             </div>
           </TabPanel>
         </Tabs>
         <div className="content">
+          <div className="input_wrapper">
+            <input type="file" name="file" id="input_file" className="input_file" accept="image/png, image/jpeg" onChange={(e)=>this.handleImageChange(e)}/>
+            <label for="input_file" className="input_file-button">
+              <span className="input_file-icon-wrapper"><img className="input_file-icon" src="Icons/upload.svg#bold" alt="Выбрать файл" width="25" fill="white"/></span>
+              <span className="input_file-button-text">Выберите файл</span>
+            </label>
+          </div>        
           <img
             className="MainImg"
             style={imgStyle}
             alt="то что обрабатывается"
             src={this.state.image}
           />
+          <p style={textStyle}>{this.state.text}</p>
         </div>
       </div>
     );
