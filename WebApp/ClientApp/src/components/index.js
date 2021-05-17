@@ -159,7 +159,8 @@ export class Home extends React.Component {
     };
     this.handleImageChange = this.handleImageChange.bind(this);
     this.changeSettings = this.changeSettings.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+      this.handleChange = this.handleChange.bind(this);
+      this.download = this.download.bind(this);
     this.changeText = this.changeText.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.resetRotation = this.resetRotation.bind(this);
@@ -176,11 +177,7 @@ export class Home extends React.Component {
 
     reader.onloadend = () => {
       this.setState({ image: reader.result });
-      this.setState({ imageSize: {imgHeight: file.offsetHeight} });
-      /*let imgWidth = {...this.state.imageSize.imgWidth, reader.result.imgWidth}
-      this.setState({imgWidth: reader.result.imgWidth})*/
-      /*imgWidth = file.width;
-      imgHeight = file.height;*/
+      this.setState({ imageSize: { imgHeight: file.offsetHeight } });
     }
 
     reader.readAsDataURL(file)
@@ -233,6 +230,18 @@ export class Home extends React.Component {
     this.changeSettings({
       blur: "0"
     });
+  }
+
+    download(e) {
+        fetch('/Download', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(this.state.currentEdit)
+        })
+
+
   }
 
   addInputs(resetFunction, currentSettings) {
@@ -458,7 +467,7 @@ export class Home extends React.Component {
           <TabPanel>
             <div className="panel-content">
               <h2 className="panel-title">Скачать</h2>
-              <Button className="downloadButton">
+                        <Button className="downloadButton" onClick={this.download}>
                 Скачать изображение
               </Button>
             </div>
@@ -466,6 +475,9 @@ export class Home extends React.Component {
         </Tabs>
         <div className="content">
           <div className="input_wrapper">
+                   
+                    
+                
             <input type="file" name="file" id="input_file" className="input_file" accept="image/png, image/jpeg" onChange={(e)=>this.handleImageChange(e)}/>
             <label for="input_file" className="input_file-button">
               <span className="input_file-icon-wrapper"><img className="input_file-icon" src="Icons/upload.svg#bold" alt="Выбрать файл" width="25" fill="white"/></span>
