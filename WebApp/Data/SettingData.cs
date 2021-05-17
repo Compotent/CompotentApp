@@ -8,6 +8,7 @@ namespace WebApp.Data
     public class SettingData
     {
         public int brightness { get; set; }
+        public int saturate { get; set; }
         public int contrast { get; set; }
         public int sepia { get; set; }
         public int rotate_x { get; set; }
@@ -18,6 +19,7 @@ namespace WebApp.Data
         public int top { get; set; }
         public int right { get; set; }
         public int bottom { get; set; }
-        public int blur { get; set; }
+        public int left { get; set; }
+        public double blur { get; set; }
     }
 }
