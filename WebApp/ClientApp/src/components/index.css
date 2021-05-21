@@ -1,0 +1,257 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  background-color: #0c0e38;
+}
+
+.container {
+  margin: 0px;
+  padding: 0px;
+}
+
+.App {
+  display: flex;
+  font-family: sans-serif;
+  background: #0c0e38;
+  color: #9beffd;
+  height: calc(100vh - 57px);
+  width: 100vw;
+  
+}
+
+.react-tabs {
+  display: flex;
+  width: 350px;
+  
+  color: #9beffd;
+  background: #151448;
+  float: left;
+}
+
+.react-tabs__tab-list {
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  margin: 0;
+  padding: 0;
+  color: #9beffd;
+  background: #0d0d32;
+}
+
+.react-tabs__tab {
+  height: 88px;
+  list-style: none;
+  cursor: pointer;
+  color: #bbb;
+}
+
+.react-tabs__tab:hover {
+  background-color: #0a8cc9;
+}
+
+.react-tabs__tab--selected {
+  background: #151448;
+  border-color: #1c1d1f;
+  border-left: 4px solid #00e6f7;
+  color: white;
+}
+
+.react-tabs__tab-panel {
+  display: none;
+  width: 250px;
+}
+
+.react-tabs__tab-panel--selected {
+  display: block;
+}
+
+.react-tabs__tab {
+  padding-left: 24px;
+}
+
+.react-tabs__tab--selected {
+  padding-left: 21px;
+}
+
+.panel-content {
+  margin-top: 7px;
+}
+
+.panel-title {
+  text-align: center;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inputs {
+  font-size: 14px;
+  padding: 20px;
+  padding-right: 10px;
+  color: white;
+}
+
+.inputs form {
+  margin: 30px 0;
+}
+
+input {
+  margin: 5px;
+}
+
+input[type="range"] {
+  outline: none;
+  background: rgb(145, 17, 17);
+  color: red;
+}
+
+input[type="range"]:hover {
+  cursor: pointer;
+}
+
+input[type="number"] {
+  font-size: 1.4rem;
+  width: 60px;
+  margin: 0 10px;
+  border: 0;
+  text-align: right;
+  background: 0;
+  color: #b0bec5;
+}
+
+Button {
+  text-align: center;
+  background: linear-gradient(145deg, #007bff, #7decff);
+
+  color: white;
+  font-weight: bolder;
+  border-radius: 60px;
+  border: none;
+  width: 129px;
+  height: 30px;
+  margin: 5px;
+}
+
+Button:hover{
+  cursor: pointer;
+  transition: all 0.2s;
+	box-shadow: 2px 3px 15px 0 rgb(128 209 239 / 75%);
+}
+
+.downloadButton{
+  display: block;
+  height: auto;
+  padding: 5px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+}
+
+.formatButton{
+  width: auto;
+  padding: 10px;
+  height: 40px;
+  margin: auto;
+  margin-top: 15px;
+  display: block;
+  
+}
+
+.icons {
+  width: 75%;
+  height: 80%;
+  fill: #9beffd;
+  margin-top: 10px;
+}
+
+.MainImg {
+  max-width: 100%;
+  max-height: 90%;
+}
+
+.textarea {
+  height: 45px;
+  width: calc(100% - 15px);
+  max-width: calc(100% - 15px);
+  max-height: 400px;
+  padding: 5px;
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  border-radius: 10px;
+  box-shadow: 0 0 8px 3px rgba(255, 255, 255, 0.1);
+}
+
+#textColor {
+  width: 99%;
+  margin: 0;
+}
+
+.input_wrapper {
+  width: auto;
+  position: absolute;
+  margin: 15px 0;
+  text-align: center;
+  top: 60px;
+  
+}
+ 
+.input_file {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+}
+ 
+.input_file-icon-wrapper {
+  height: 60px;
+  width: 60px;
+  margin-right: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  border-right: 1px solid #fff;
+}
+
+.input_file-button-text {
+  line-height: 1;
+  margin-top: 1px;
+}
+ 
+.input_file-button {
+  position: relative;
+  width: 120%;
+  max-width: 300px;
+  height: 60px;
+  background: linear-gradient(145deg, #007bff, #7decff);
+  color: #fff;
+  font-size: 1.125rem;
+  font-weight: 700;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  border-radius: 60px;
+  cursor: pointer;
+  margin: 0 auto;
+  z-index: 10;
+}
