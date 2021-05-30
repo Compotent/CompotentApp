@@ -24,19 +24,14 @@ export class Home extends React.Component {
         saturate: "100",
         contrast: "100",
         sepia: "0",
-        rotate_x: "0",
-        rotate_y: "0",
         rotate_z: "0",
         top: "0",
         right: "0",
         bottom: "0",
         left: "0",
         blur: "0",
-        text: "",
-        textcolor: "#000",
-        fontsize: "20",
-        text_x: "50",
-        text_y: "50"
+        format: "image/jpeg",
+        buffer: ""
       },
       filterSettings: [
         {
@@ -168,7 +163,10 @@ export class Home extends React.Component {
     this.resetSize = this.resetSize.bind(this);
     this.resetBlur = this.resetBlur.bind(this);
   }
-  
+  changeSettings(settings) {
+    let currentEdit = { ...this.state.currentEdit, ...settings };
+    this.setState({ currentEdit });
+  }
   handleImageChange(e) {
     e.preventDefault();
 
@@ -177,16 +175,22 @@ export class Home extends React.Component {
 
     reader.onloadend = () => {
       this.setState({ image: reader.result });
-      this.setState({ imageSize: { imgHeight: file.offsetHeight } });
+        this.setState({ imageSize: { imgHeight: file.offsetHeight } });
+        var buf = new Uint8Array(reader.result);
+        console.log(this.state.currentEdit);
+        console.log(reader.result);
+        console.log(buf);
+        var base64result = reader.result.split(',')[1];
+
+        this.changeSettings({
+            buffer: base64result//readAsArrayBuffer(file)
+        });
     }
 
     reader.readAsDataURL(file)
   }
 
-  changeSettings(settings) {
-    let currentEdit = { ...this.state.currentEdit, ...settings };
-    this.setState({ currentEdit });
-  }
+  
 
   handleChange(e) {
     let currentEdit = {
