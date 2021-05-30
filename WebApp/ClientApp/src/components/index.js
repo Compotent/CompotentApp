@@ -19,6 +19,7 @@ export class Home extends React.Component {
     super(props);
     this.state = {
       image: imgUrl,
+      imageSize: {},
       currentEdit: {
         brightness: "100",
         saturate: "100",
@@ -35,8 +36,9 @@ export class Home extends React.Component {
         text: "",
         textcolor: "#000",
         fontsize: "20",
-        text_x: "50",
-        text_y: "50"
+        text_x: "0",
+        text_y: "0",
+        image_format: "jpg"
       },
       filterSettings: [
         {
@@ -150,7 +152,7 @@ export class Home extends React.Component {
     this.resetBlur = this.resetBlur.bind(this);
     this.resetSize = this.resetSize.bind(this);
     this.resetBlur = this.resetBlur.bind(this);
-    this.resetText = this.resetText.bind(this);
+    this.selectFormat = this.selectFormat.bind(this);
   }
   
   onImgLoad(e) {
@@ -175,7 +177,6 @@ export class Home extends React.Component {
       } });
       this.setSizeSettings(file.offsetHeight, file.offsetWidth);
     }
-
     reader.readAsDataURL(file)
   }
 
@@ -229,9 +230,13 @@ export class Home extends React.Component {
     this.setState({ currentEdit });
   }
 
-  changeText(event) {
-    this.setState({ text: event.target.value });
-   // this.setState({ currentEdit });
+  changeText(e) {
+    let currentEdit = {
+      ...this.state.currentEdit,
+      text: e.target.value
+    };
+    this.setState({ currentEdit });
+    this.setState({ text: e.target.value });
   }
 
   resetFilters(e) {
@@ -266,14 +271,15 @@ export class Home extends React.Component {
     });
   }
 
-  resetText(e) {
-    this.changeSettings({
-      text: ""
-    });
+  selectFormat(e) {
+    let currentEdit = {
+      ...this.state.currentEdit,
+      image_format: e.target.id
+    };
+    this.setState({currentEdit}, this.download)
   }
 
   download(e) {
-    debugger;
       fetch('/Download', {
           method: 'POST',   
           headers: {
@@ -285,10 +291,10 @@ export class Home extends React.Component {
               var url = window.URL.createObjectURL(blob);
               var a = document.createElement('a');
               a.href = url;
-              a.download = "image.jpg";
-              document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+              a.download = "image." + this.state.currentEdit.image_format;
+              document.body.appendChild(a);
               a.click();
-              a.remove();  //afterwards we remove the element again         
+              a.remove();        
           });
 
 
@@ -341,7 +347,6 @@ export class Home extends React.Component {
       bottom,
       left,
       blur,
-      text,
       textcolor,
       fontsize,
       text_x,
@@ -351,22 +356,20 @@ export class Home extends React.Component {
       var filter = `sepia() brightness(${brightness*0.8}%) saturate(${saturate*1.7}%) contrast(${contrast*1.3}%) blur(${blur}px)`;
     else var filter = `blur(${blur}px) brightness(${brightness}%) saturate(${saturate}%) contrast(${contrast}%)`;
     const imgStyle = {
-      width: "auto",
-      height: "auto",
       clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px)`,
       transform: `rotateX(${rotate_x}deg) rotateY(${rotate_y}deg) rotateZ(${rotate_z}deg)`,
       filter: filter
-      //filter: `sepia() brightness(0.8) saturate(1.7) contrast(1.5)`,
-      //filter: `blur(${blur}px) brightness(${brightness}) saturate(${saturate}%) contrast(${contrast}%) sepia(${sepia}%)`
     };
     const textStyle = {
-      fontFace: "Calibri",
+      fontFamily: "Georgia, serif",
       fontSize: `${fontsize}px`,
-      fontWeight: "bold",
       color: `${textcolor}`,
-      position: "absolute",
-      bottom: `${text_y}%`,
-      left: `${text_x}%`
+      position: "relative",
+      display: "inline-block",
+      margin: "0",
+      padding: "0",
+      top: `${text_y}px`,
+      left: `${text_x}px`
     };
 
     return (
@@ -424,10 +427,8 @@ export class Home extends React.Component {
                 <textarea
                   placeholder="Type text here!"
                   className="textarea"
-                  //value={this.state.text}
-                  value={this.state.currentEdit[this.state.text]}
+                  value={this.state.text}
                   onChange={this.changeText}
-                  //onChange={this.handleChange}
                 />
                 <form key="13">
                   <h3>Размер шрифта</h3>
@@ -473,9 +474,10 @@ export class Home extends React.Component {
                     value={
                       this.state.currentEdit[this.state.textSettings.text_x]
                     }
-                    step="0.05"
+                    step="1"
+                    default="0"
                     min="0"
-                    max="100"
+                    max={this.state.imageSize.imgWidth}
                     onChange={this.handleChange}
                   />
                 </form>
@@ -487,9 +489,10 @@ export class Home extends React.Component {
                     value={
                       this.state.currentEdit[this.state.textSettings.text_y]
                     }
-                    step="0.05"
-                    min="0"
-                    max="100"
+                    step="1"
+                    default="0"
+                    min={-fontsize/2}
+                    max={this.state.imageSize.imgHeight - fontsize}
                     onChange={this.handleChange}
                   />
                 </form>
@@ -511,10 +514,10 @@ export class Home extends React.Component {
           <TabPanel>
             <div className="panel-content">
               <h2 className="panel-title">Скачать изображение</h2>
-              <Button className="downloadButton" onClick={this.download}>
+              <Button className="downloadButton" id="jpg" onClick={(e)=>this.selectFormat(e)}>
                 В формате jpeg
               </Button>
-              <Button className="downloadButton">
+              <Button className="downloadButton" id="png" onClick={(e)=>this.selectFormat(e)}>
                 В формате png
               </Button>
             </div>
@@ -532,10 +535,13 @@ export class Home extends React.Component {
             className="MainImg"
             onLoad={(e) => this.onImgLoad(e)}
             style={imgStyle}
-            alt="то что обрабатывается"
+            alt="То, что обрабатывается"
             src={this.state.image}
           />
-          <p style={textStyle}>{this.state.text}</p>
+          <div style={{width:`${this.state.imageSize.imgWidth}px`, height: `${this.state.imageSize.imgHeight}px`}}>
+            <p style={textStyle} className="Text">{this.state.text}</p>
+          </div>
+          
         </div>
       </div>
     );
