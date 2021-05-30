@@ -19,8 +19,9 @@ export class Home extends React.Component {
     super(props);
     this.state = {
       image: imgUrl,
+      imageSize: {},
       currentEdit: {
-        brightness: "1",
+        brightness: "100",
         saturate: "100",
         contrast: "100",
         sepia: "0",
@@ -35,27 +36,30 @@ export class Home extends React.Component {
         text: "",
         textcolor: "#000",
         fontsize: "20",
-        text_x: "50",
-        text_y: "50"
+        text_x: "0",
+        text_y: "0",
+        image_format: "jpg"
       },
       filterSettings: [
         {
           id: 1,
+          heading: "Яркость",
           property: "brightness",
-          default: "1",
+          default: "100",
           min: "0",
-          max: "3",
-          step: "0.01"
+          max: "150"
         },
         {
           id: 2,
+          heading: "Насыщенность",
           property: "saturate",
           default: "100",
           min: "0",
-          max: "200"
+          max: "150"
         },
         {
           id: 3,
+          heading: "Контраст",
           property: "contrast",
           default: "100",
           min: "50",
@@ -63,68 +67,47 @@ export class Home extends React.Component {
         },
         {
           id: 4,
+          heading: "Сепия",
           property: "sepia",
           default: "0",
           min: "0",
-          max: "100"
+          max: "1",
+          step: "1"
         }
       ],
       rotationSettings: [
         {
           id: 5,
+          heading: "Отразить по вертикали",
           property: "rotate_x",
           default: "0",
+          step:"180",
           min: "0",
           max: "180"
         },
         {
           id: 6,
+          heading: "Отразить по горизонтали",
           property: "rotate_y",
           default: "0",
+          step:"180",
           min: "0",
           max: "180"
         },
         {
           id: 7,
+          heading: "Поворот",
           property: "rotate_z",
           default: "0",
           min: "0",
           max: "360"
         }
       ],
-      sizeSettings: [
-        {
-          id: 8,
-          property: "top",
-          default: "0",
-          min: "0",
-          max: "100"
-        },
-        {
-          id: 9,
-          property: "right",
-          default: "0",
-          min: "0",
-          max: "100"
-        },
-        {
-          id: 10,
-          property: "bottom",
-          default: "0",
-          min: "0",
-          max: "100"
-        },
-        {
-          id: 11,
-          property: "left",
-          default: "0",
-          min: "0",
-          max: "100"
-        }
-      ],
+      sizeSettings: [],
       blurSettings: [
         {
           id: 12,
+          heading: "Гауссово размытие",
           property: "blur",
           default: "0",
           min: "0",
@@ -157,18 +140,29 @@ export class Home extends React.Component {
         }
       ]
     };
+    this.onImgLoad = this.onImgLoad.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
+    this.setSizeSettings = this.setSizeSettings.bind(this);
     this.changeSettings = this.changeSettings.bind(this);
-      this.handleChange = this.handleChange.bind(this);
-      this.download = this.download.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.download = this.download.bind(this);
     this.changeText = this.changeText.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.resetRotation = this.resetRotation.bind(this);
     this.resetBlur = this.resetBlur.bind(this);
     this.resetSize = this.resetSize.bind(this);
     this.resetBlur = this.resetBlur.bind(this);
+    this.selectFormat = this.selectFormat.bind(this);
   }
   
+  onImgLoad(e) {
+    this.setState({imageSize: { 
+      imgHeight: e.target.offsetHeight,
+      imgWidth: e.target.offsetWidth
+    }});
+    this.setSizeSettings(e.target.offsetHeight, e.target.offsetWidth);
+  }
+
   handleImageChange(e) {
     e.preventDefault();
 
@@ -177,10 +171,50 @@ export class Home extends React.Component {
 
     reader.onloadend = () => {
       this.setState({ image: reader.result });
-      this.setState({ imageSize: { imgHeight: file.offsetHeight } });
+      this.setState({ imageSize: { 
+        imgHeight: file.offsetHeight,
+        imgWidth: file.offsetWidth
+      } });
+      this.setSizeSettings(file.offsetHeight, file.offsetWidth);
     }
-
     reader.readAsDataURL(file)
+  }
+
+  setSizeSettings(height, width) {
+    this.setState({sizeSettings: [
+      {
+        id: 8,
+        heading: "Сверху",
+        property: "top",
+        default: "0",
+        min: "0",
+        max: height
+      },
+      {
+        id: 9,
+        heading: "Справа",
+        property: "right",
+        default: "0",
+        min: "0",
+        max: width
+      },
+      {
+        id: 10,
+        heading: "Снизу",
+        property: "bottom",
+        default: "0",
+        min: "0",
+        max: height
+      },
+      {
+        id: 11,
+        heading: "Слева",
+        property: "left",
+        default: "0",
+        min: "0",
+        max: width
+      }
+    ]});
   }
 
   changeSettings(settings) {
@@ -196,13 +230,18 @@ export class Home extends React.Component {
     this.setState({ currentEdit });
   }
 
-  changeText(event) {
-    this.setState({ text: event.target.value });
+  changeText(e) {
+    let currentEdit = {
+      ...this.state.currentEdit,
+      text: e.target.value
+    };
+    this.setState({ currentEdit });
+    this.setState({ text: e.target.value });
   }
 
   resetFilters(e) {
     this.changeSettings({
-      brightness: "1",
+      brightness: "100",
       saturate: "100",
       contrast: "100",
       sepia: "0"
@@ -232,23 +271,31 @@ export class Home extends React.Component {
     });
   }
 
-    download(e) {
-        fetch('/Download', {
-            method: 'POST',   
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(this.state.currentEdit)
-        }).then(response => response.blob())
-            .then(blob => {
-                var url = window.URL.createObjectURL(blob);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = "image.jpg";
-                document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-                a.click();
-                a.remove();  //afterwards we remove the element again         
-            });
+  selectFormat(e) {
+    let currentEdit = {
+      ...this.state.currentEdit,
+      image_format: e.target.id
+    };
+    this.setState({currentEdit}, this.download)
+  }
+
+  download(e) {
+      fetch('/Download', {
+          method: 'POST',   
+          headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify(this.state.currentEdit)
+      }).then(response => response.blob())
+          .then(blob => {
+              var url = window.URL.createObjectURL(blob);
+              var a = document.createElement('a');
+              a.href = url;
+              a.download = "image." + this.state.currentEdit.image_format;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();        
+          });
 
 
   }
@@ -261,7 +308,7 @@ export class Home extends React.Component {
         </Button>
         {currentSettings.map((setting) => (
           <form key={setting.id}>
-            <h3>{setting.property}</h3>
+            <h3>{setting.heading}</h3>
             <input
               type="range"
               name={setting.property}
@@ -276,6 +323,8 @@ export class Home extends React.Component {
               name={setting.property}
               value={this.state.currentEdit[setting.property]}
               step={setting.step}
+              min={setting.min}
+              max={setting.max}
               onChange={this.handleChange}
             />
           </form>
@@ -303,21 +352,24 @@ export class Home extends React.Component {
       text_x,
       text_y,
     } = this.state.currentEdit;
+    if (sepia > 0)
+      var filter = `sepia() brightness(${brightness*0.8}%) saturate(${saturate*1.7}%) contrast(${contrast*1.3}%) blur(${blur}px)`;
+    else var filter = `blur(${blur}px) brightness(${brightness}%) saturate(${saturate}%) contrast(${contrast}%)`;
     const imgStyle = {
-      width: "auto",
-      height: "auto",
-      clipPath: `inset(${top}% ${right}% ${bottom}% ${left}%)`,
+      clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px)`,
       transform: `rotateX(${rotate_x}deg) rotateY(${rotate_y}deg) rotateZ(${rotate_z}deg)`,
-      filter: `blur(${blur}px) brightness(${brightness}) saturate(${saturate}%) contrast(${contrast}%) sepia(${sepia}%)`
+      filter: filter
     };
     const textStyle = {
-      fontFace: "Calibri",
+      fontFamily: "Georgia, serif",
       fontSize: `${fontsize}px`,
-      fontWeight: "bold",
       color: `${textcolor}`,
-      position: "absolute",
-      bottom: `${text_y}%`,
-      left: `${text_x}%`
+      position: "relative",
+      display: "inline-block",
+      margin: "0",
+      padding: "0",
+      top: `${text_y}px`,
+      left: `${text_x}px`
     };
 
     return (
@@ -351,11 +403,6 @@ export class Home extends React.Component {
             </Tab>
             <Tab>
               <svg className="icons" viewBox="0 0 512 512">
-                <use xlinkHref="Icons/file.svg#Glyph" />
-              </svg>
-            </Tab>
-            <Tab>
-              <svg className="icons" viewBox="0 0 512 512">
                 <use xlinkHref="Icons/direct-download.svg#bold" />
               </svg>
             </Tab>
@@ -384,7 +431,7 @@ export class Home extends React.Component {
                   onChange={this.changeText}
                 />
                 <form key="13">
-                  <h3>Font size</h3>
+                  <h3>Размер шрифта</h3>
                   <input
                     type="range"
                     name={this.state.textSettings[2].property}
@@ -407,7 +454,7 @@ export class Home extends React.Component {
                   />
                 </form>
                 <form key="14">
-                  <h3>Color</h3>
+                  <h3>Цвет</h3>
                   <input
                     id="textColor"
                     type="color"
@@ -420,30 +467,32 @@ export class Home extends React.Component {
                   />
                 </form>
                 <form key="15">
-                  <h3>Font position X</h3>
+                  <h3>Положение по горизонтали</h3>
                   <input
                     type="range"
                     name={this.state.textSettings[3].property}
                     value={
                       this.state.currentEdit[this.state.textSettings.text_x]
                     }
-                    step="0.05"
+                    step="1"
+                    default="0"
                     min="0"
-                    max="100"
+                    max={this.state.imageSize.imgWidth}
                     onChange={this.handleChange}
                   />
                 </form>
                 <form key="16">
-                  <h3>Font pozition Y</h3>
+                  <h3>Положение по вертикали</h3>
                   <input
                     type="range"
                     name={this.state.textSettings[4].property}
                     value={
                       this.state.currentEdit[this.state.textSettings.text_y]
                     }
-                    step="0.05"
-                    min="0"
-                    max="100"
+                    step="1"
+                    default="0"
+                    min={-fontsize/2}
+                    max={this.state.imageSize.imgHeight - fontsize}
                     onChange={this.handleChange}
                   />
                 </form>
@@ -464,42 +513,35 @@ export class Home extends React.Component {
           </TabPanel>
           <TabPanel>
             <div className="panel-content">
-              <h2 className="panel-title">Формат изображения</h2>
-              <Button className="formatButton">
-                Преобразовать в jpeg
+              <h2 className="panel-title">Скачать изображение</h2>
+              <Button className="downloadButton" id="jpg" onClick={(e)=>this.selectFormat(e)}>
+                В формате jpeg
               </Button>
-              <Button className="formatButton">
-                Преобразовать в png
-              </Button>
-            </div>
-          </TabPanel>
-          <TabPanel>
-            <div className="panel-content">
-              <h2 className="panel-title">Скачать</h2>
-                        <Button className="downloadButton" onClick={this.download}>
-                Скачать изображение
+              <Button className="downloadButton" id="png" onClick={(e)=>this.selectFormat(e)}>
+                В формате png
               </Button>
             </div>
           </TabPanel>
         </Tabs>
         <div className="content">
           <div className="input_wrapper">
-                   
-                    
-                
             <input type="file" name="file" id="input_file" className="input_file" accept="image/png, image/jpeg" onChange={(e)=>this.handleImageChange(e)}/>
-            <label for="input_file" className="input_file-button">
+            <label htmlFor="input_file" className="input_file-button">
               <span className="input_file-icon-wrapper"><img className="input_file-icon" src="Icons/upload.svg#bold" alt="Выбрать файл" width="25" fill="white"/></span>
               <span className="input_file-button-text">Выберите файл</span>
             </label>
           </div>        
           <img
             className="MainImg"
+            onLoad={(e) => this.onImgLoad(e)}
             style={imgStyle}
-            alt="то что обрабатывается"
+            alt="То, что обрабатывается"
             src={this.state.image}
           />
-          <p style={textStyle}>{this.state.text}</p>
+          <div style={{width:`${this.state.imageSize.imgWidth}px`, height: `${this.state.imageSize.imgHeight}px`}}>
+            <p style={textStyle} className="Text">{this.state.text}</p>
+          </div>
+          
         </div>
       </div>
     );
