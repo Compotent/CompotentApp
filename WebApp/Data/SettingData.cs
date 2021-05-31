@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,6 +8,8 @@ namespace WebApp.Data
 {
     public class SettingData
     {
+        [Key]
+        public Guid id { get; set; }
         public string image { get; set; }
         public string image_format { get; set; }
         public double brightness { get; set; }

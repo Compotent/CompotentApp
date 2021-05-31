@@ -14,12 +14,14 @@ function Button({ children, ...args }) {
   );
 }
 
+
 export class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       imageSize: {},
-      currentEdit: {
+        currentEdit: {
+        guid: "",
         image: imgUrl,
         brightness: "100",
         saturate: "100",
@@ -163,13 +165,25 @@ export class Home extends React.Component {
     this.setSizeSettings(e.target.offsetHeight, e.target.offsetWidth);
   }
 
+    
   handleImageChange(e) {
     e.preventDefault();
 
     let reader = new FileReader();
     let file = e.target.files[0];
+      function createGuid() {
+          function _p8(s) {
+              var p = (Math.random().toString(16) + "000000000").substr(2, 8);
+              return s ? "-" + p.substr(0, 4) + "-" + p.substr(4, 4) : p;
+          }
+          return _p8() + _p8(true) + _p8(true) + _p8();
+      }
+      reader.onloadend = () => {
+          var guid = createGuid(); 
+          this.changeSettings({
+              guid: guid
+          });
 
-    reader.onloadend = () => {
       let currentEdit = { ...this.state.currentEdit, image: reader.result};
       this.setState({currentEdit});
       this.setState({ imageSize: { 
@@ -280,7 +294,8 @@ export class Home extends React.Component {
     this.setState({currentEdit}, this.download)
   }
 
-  download(e) {
+    download(e) {
+
       fetch('/Download', {
           method: 'POST',   
           headers: {
