@@ -12,24 +12,24 @@ namespace WebApp.Data
         public double brightness { get; set; }
         public double saturate { get; set; }
         public double contrast { get; set; }
-        public int sepia { get; set; }
-        public int rotate_x { get; set; }
+        public double sepia { get; set; }
+        public double rotate_x { get; set; }
 
-        public int rotate_y { get; set; }
-        public int rotate_z { get; set; }
+        public double rotate_y { get; set; }
+        public double rotate_z { get; set; }
 
-        public int top { get; set; }
-        public int right { get; set; }
-        public int bottom { get; set; }
-        public int left { get; set; }
+        public double top { get; set; }
+        public double right { get; set; }
+        public double bottom { get; set; }
+        public double left { get; set; }
 
         public double blur { get; set; }
 
         public string text { get; set; }
         public double fontsize { get; set; }
         public string textcolor { get; set; }
-        public int text_x { get; set; }
-        public int text_y { get; set; }
+        public double text_x { get; set; }
+        public double text_y { get; set; }
 
     }
 }

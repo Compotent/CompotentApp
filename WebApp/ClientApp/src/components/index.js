@@ -539,7 +539,11 @@ export class Home extends React.Component {
             alt="То, что обрабатывается"
             src={this.state.currentEdit.image}
           />
-          <div style={{width:`${this.state.imageSize.imgWidth}px`, height: `${this.state.imageSize.imgHeight}px`}}>
+          <div style={{
+            width:`${this.state.imageSize.imgWidth}px`, 
+            height: `${this.state.imageSize.imgHeight}px`,
+            transform: `rotateX(${rotate_x}deg) rotateY(${rotate_y}deg) rotateZ(${rotate_z}deg)`
+            }}>
             <p style={textStyle} className="Text">{this.state.text}</p>
           </div>
           

@@ -21,10 +21,7 @@ namespace WebApp.Controllers
                 byte[] imageBytes;
                 if (data.image.Substring(0, 4) == "data")
                 {
-                    var i = 0;
-                    while(data.image[i] != ',')
-                        i++;
-                    var str = data.image.Substring(i+1);
+                    var str = data.image.Split(',')[1];
                     imageBytes = Convert.FromBase64String(str);
                 }
                 else
@@ -35,19 +32,6 @@ namespace WebApp.Controllers
                     
                 using (var image = new MagickImage(imageBytes))
                 {
-                    //Обрезка
-                    image.Crop(new MagickGeometry((int)(data.left),
-                                                  (int)(data.top),
-                                                  (int)(image.Width - (data.right + data.left)), 
-                                                  (int)(image.Height - (data.bottom + data.top))));
-                    
-                    //Поворот
-                    image.Rotate(data.rotate_z);
-                    if (data.rotate_x > 0)
-                        image.Flip();
-                    if (data.rotate_y > 0)
-                        image.Flop();
-                        
                     //Фильтры
                     if (data.sepia > 0)
                         image.SepiaTone();
@@ -56,7 +40,7 @@ namespace WebApp.Controllers
                     image.Modulate(new Percentage(data.brightness*0.8), new Percentage(data.saturate*0.9)); 
 
                     //Размытие
-                    image.GaussianBlur(data.blur*1.6, data.blur);
+                    image.GaussianBlur(data.blur*1.8, data.blur);
 
                     //Добавление текста
                     if (data.text != "")
@@ -70,9 +54,23 @@ namespace WebApp.Controllers
                         image.Alpha(AlphaOption.Opaque);
                         using (MagickImage label = new MagickImage($"label:{data.text}", readSettings))
                         {
-                            image.Composite(label, data.text_x, data.text_y + 8, CompositeOperator.Over); // расположение текста на картинке
+                            image.Composite(label, (int)(data.text_x), (int)(data.text_y + 8), CompositeOperator.Over); // расположение текста на картинке
                         }
                     }
+                    
+                    //Обрезка
+                    image.Crop(new MagickGeometry((int)(data.left),
+                                                  (int)(data.top),
+                                                  (int)(image.Width - (data.right + data.left)), 
+                                                  (int)(image.Height - (data.bottom + data.top))));
+                    
+                    //Поворот
+                    image.Rotate(data.rotate_z);
+                    if (data.rotate_x > 0)
+                        image.Flip();
+                    if (data.rotate_y > 0)
+                        image.Flop();
+        
                     b = image.ToByteArray();
                 }
             }
