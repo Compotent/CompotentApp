@@ -39,6 +39,10 @@ namespace WebApp
             services.AddIdentityServer(Configuration.GetSection("IdentityServer"))
                  .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
+            services.AddDbContext<ImageDBContext>(options =>
+                options.UseSqlite(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
