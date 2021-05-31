@@ -18,9 +18,9 @@ export class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: imgUrl,
       imageSize: {},
       currentEdit: {
+        image: imgUrl,
         brightness: "100",
         saturate: "100",
         contrast: "100",
@@ -170,7 +170,8 @@ export class Home extends React.Component {
     let file = e.target.files[0];
 
     reader.onloadend = () => {
-      this.setState({ image: reader.result });
+      let currentEdit = { ...this.state.currentEdit, image: reader.result};
+      this.setState({currentEdit});
       this.setState({ imageSize: { 
         imgHeight: file.offsetHeight,
         imgWidth: file.offsetWidth
@@ -536,7 +537,7 @@ export class Home extends React.Component {
             onLoad={(e) => this.onImgLoad(e)}
             style={imgStyle}
             alt="То, что обрабатывается"
-            src={this.state.image}
+            src={this.state.currentEdit.image}
           />
           <div style={{width:`${this.state.imageSize.imgWidth}px`, height: `${this.state.imageSize.imgHeight}px`}}>
             <p style={textStyle} className="Text">{this.state.text}</p>

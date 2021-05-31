@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ImageMagick;
 using WebApp.Data;
+using System.Net;
 
 namespace WebApp.Controllers
 {
@@ -17,16 +18,28 @@ namespace WebApp.Controllers
             Byte[] b;  
             using (var reader = new StreamReader(Request.Body))
             {
-                var body = reader.ReadToEnd();
-                
+                byte[] imageBytes;
+                if (data.image.Substring(0, 4) == "data")
+                {
+                    var i = 0;
+                    while(data.image[i] != ',')
+                        i++;
+                    var str = data.image.Substring(i+1);
+                    imageBytes = Convert.FromBase64String(str);
+                }
+                else
+                {
+                    var webClient = new WebClient();
+                    imageBytes = webClient.DownloadData(data.image);
+                }
                     
-                using (var image = new MagickImage("https://www.hospital-mmk.ru/wp-content/uploads/2020/08/1785dff58a020e0fab4416747a9056f1.jpg"))
+                using (var image = new MagickImage(imageBytes))
                 {
                     //Обрезка
-                    image.Crop(new MagickGeometry((int)(data.left*2),
-                                                  (int)(data.top*2),
-                                                  (int)(image.Width - data.right*2), 
-                                                  (int)(image.Height - data.bottom*2)));
+                    image.Crop(new MagickGeometry((int)(data.left),
+                                                  (int)(data.top),
+                                                  (int)(image.Width - (data.right + data.left)), 
+                                                  (int)(image.Height - (data.bottom + data.top))));
                     
                     //Поворот
                     image.Rotate(data.rotate_z);

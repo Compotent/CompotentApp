@@ -7,6 +7,7 @@ namespace WebApp.Data
 {
     public class SettingData
     {
+        public string image { get; set; }
         public string image_format { get; set; }
         public double brightness { get; set; }
         public double saturate { get; set; }
